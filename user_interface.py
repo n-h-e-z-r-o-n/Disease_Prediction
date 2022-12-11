@@ -1,5 +1,6 @@
 import joblib
-
+from sklearn.metrics import accuracy_score
+import y_validation as score
 common_disease_model = joblib.load('Common_Disease/model-disease-prediction.joblib')  # loading common disease module.
 heart_disease_model = joblib.load('Heart_Disease/model-heart_disease.joblib')  # loading heart disease module.
 
@@ -18,6 +19,8 @@ symptoms_list = ['itching', 'skin_rash', 'nodal_skin_eruptions', 'continuous_sne
                  'history_of_alcohol_consumption', 'fluid_overload', 'blood_in_sputum', 'prominent_veins_on_calf', 'palpitations', 'painful_walking', 'pus_filled_pimples', 'blackheads', 'scurring', 'skin_peeling', 'silver_like_dusting',
                  'small_dents_in_nails', 'inflammatory_nails',
                  'blister', 'red_sore_around_nose', 'yellow_crust_ooze']
+
+check_button_widget_list = []
 
 from tkinter import *
 
@@ -85,21 +88,25 @@ while i < 150:
         b = Checkbutton(symptoms_frame, text=symptoms_list[i], font=("Courier New Bold", 10), variable=numt[i], onvalue=1, offvalue=0, anchor='w', bg='white')
         b.place(relx=0.01, rely=column1, relwidth=0.19, height=16)
         changeOnHover(b, '#82EEFD', 'white')
+        check_button_widget_list.append(b)
         column1 = column1 + 0.032
     if 29 < i <= 59:
         b = Checkbutton(symptoms_frame, text=symptoms_list[i], font=("Courier New Bold", 10), variable=numt[i], onvalue=1, offvalue=0, anchor='w', bg='white')
         b.place(relx=0.21, rely=column2, relwidth=0.19, height=16)
         changeOnHover(b, '#82EEFD', 'white')
+        check_button_widget_list.append(b)
         column2 = column2 + 0.032
     if 59 < i <= 89:
         b = Checkbutton(symptoms_frame, text=symptoms_list[i], activebackground='blue', font=("Courier New Bold", 10), variable=numt[i], onvalue=1, offvalue=0, anchor='w', bg='white')
         b.place(relx=0.41, rely=column3, relwidth=0.19, height=16)
         changeOnHover(b, '#82EEFD', 'white')
+        check_button_widget_list.append(b)
         column3 = column3 + 0.032
     if 89 < i <= 119:
         b = Checkbutton(symptoms_frame, text=symptoms_list[i], font=("Courier New Bold", 10), variable=numt[i], onvalue=1, offvalue=0, anchor='w', bg='white')
         b.place(relx=0.61, rely=column4, relwidth=0.19, height=16)
         changeOnHover(b, '#82EEFD', 'white')
+        check_button_widget_list.append(b)
         column4 = column4 + 0.032
     if 119 < i <= 149:
         if i == len(symptoms_list):
@@ -107,6 +114,7 @@ while i < 150:
         b = Checkbutton(symptoms_frame, text=symptoms_list[i], font=("Courier New Bold", 11), variable=numt[i], onvalue=1, offvalue=0, anchor='w', bg='white')
         b.place(relx=0.81, rely=column5, relwidth=0.19, height=16)
         changeOnHover(b, '#82EEFD', 'white')
+        check_button_widget_list.append(b)
         column5 = column5 + 0.032
 
     i = i + 1
@@ -120,9 +128,10 @@ def predict():
         k = k + 1
 
     patient_symptoms = [x]
-    predictions = common_disease_model.predict(patient_symptoms)  # Make Preadiction
-    print(predictions)
+    predictions = common_disease_model.predict(patient_symptoms)  # Make Prediction
+    accuracy = accuracy_score(score.y_valid, score.y_predic) * 100
     Label(Common_Disease_page, text=f'{predictions}', font=("Courier New Bold", 13), fg='brown', anchor='w', bg='white').place(relx=0.82, rely=0.75, relwidth=0.34, relheight=0.05)
+    Label(Common_Disease_page, text=f'Accuracy {accuracy}%', font=("Courier New Bold", 13), fg='brown', anchor='w', bg='white').place(relx=0.78, rely=0.78, relwidth=0.34, relheight=0.05)
 
 
 selected_symptoms_Frame = LabelFrame(Common_Disease_page, text='Patient Sysmptoms', bg='white')
@@ -161,12 +170,21 @@ def sym_display():
 
 sym_display()
 
+
+def clear():
+    i = 0
+    while i < len(check_button_widget_list):
+        numt[i].set(0)
+        i += 1
+
+
 Label(Common_Disease_page, text=f'PROGNOSIS:', font=("Courier New Bold", 12), anchor='w', bg='white').place(relx=0.7, rely=0.75, relwidth=0.132, relheight=0.05)
 
 heart_dioagnosis = Button(Common_Disease_page, text='predict', font=("Courier New Bold", 12), command=lambda: predict(), bg='gray')
 heart_dioagnosis.place(relx=0.7, rely=0.85, relwidth=0.3)
 changeOnHover(heart_dioagnosis, 'Green', 'gray')
-Button(Common_Disease_page, text='refresh', font=("Courier New Bold", 12), command=lambda: sym_display()).place(relx=0.7, rely=0.9, relwidth=0.3)
+
+Button(Common_Disease_page, text='refresh', font=("Courier New Bold", 12), command=lambda: clear()).place(relx=0.7, rely=0.9, relwidth=0.3)
 
 #  ========================= project_information_page   =================================================================================================================================================================================================
 Label(project_information_page, bg='white', text='DISEASE PREDICTION (category Machine Learning)', fg='Brown', font=("Arial Bold", 12)).place(relx=0.05, rely=0.0, relwidth=0.9, relheight=0.03)
